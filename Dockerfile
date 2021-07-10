@@ -49,8 +49,7 @@ RUN set -ex; \
 	ibus-qt4 \
 	openssh-server \
     && apt-get autoclean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get autoremove 
 RUN dpkg-reconfigure locales
 
 RUN sudo apt-get update && sudo apt-get install -y obs-studio
