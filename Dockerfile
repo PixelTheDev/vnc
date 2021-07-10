@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -73,8 +73,8 @@ RUN set -ex; \
 	
 	#install wine (Nemesistf#0001 petition)
 RUN wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-RUN sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
-RUN sudo apt install -y --install-recommends winehq-stable
+RUN add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
+RUN apt install -y --install-recommends winehq-stable
 
 
 ENV UNAME root
