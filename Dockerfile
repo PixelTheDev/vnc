@@ -72,7 +72,7 @@ RUN set -ex; \
 	
 	#install wine (Nemesistf#0001 petition)
 RUN wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-RUN add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
+RUN add-apt-repository deb https://dl.winehq.org/wine-builds/ubuntu/ focal main
 RUN apt install -y --install-recommends winehq-stable
 
 
