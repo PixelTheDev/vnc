@@ -93,6 +93,6 @@ RUN echo xfce4-session >~/.xsession
 RUN echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" 
 
 CMD ["add-apt-repository ppa:ubuntu-wine/ppa"]
-CCMD["apt install -y --install-recommends winehq-stable"]
+CMD ["apt install -y --install-recommends winehq-stable"]
 
 CMD ["/app/run.sh"]
