@@ -72,8 +72,6 @@ RUN set -ex; \
 	
 	#install wine (Nemesistf#0001 petition)
 RUN wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-RUN add-apt-repository ppa:ubuntu-wine/ppa
-RUN apt install -y --install-recommends winehq-stable
 
 
 ENV UNAME root
@@ -93,5 +91,8 @@ RUN export UNAME=$UNAME UID=1000 GID=1000 && \
 
 RUN echo xfce4-session >~/.xsession
 RUN echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" 
+
+CMD ["add-apt-repository ppa:ubuntu-wine/ppa"]
+CCMD["apt install -y --install-recommends winehq-stable"]
 
 CMD ["/app/run.sh"]
