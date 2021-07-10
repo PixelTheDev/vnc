@@ -1,6 +1,7 @@
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2FPixelTheDev%2Fvnc)
-# VNC Server ( Virtual Network Computing ) on Heroku or Railway
+# VNC Server ( Virtual Network Computing ) on Railway
+
+# NOTE: Use at your own risk, today isn't against Railway's ToS (for Heroku yes).
 
 ### Features:
   - Running on Ubuntu 18.04 Docker Image
@@ -13,19 +14,13 @@
 ### Installation
 
 ##### Requirement:
- - A Heroku account ( Register on Heroku )
+ - A Railway account ( Register on Railway )
  - Stable Network (Not ultra-fast needed)
-
-##### Steps for Heroku: 
-- Click on “ Deploy to Heroku “ Button 
-- Choose a name for your Web Application ( such as mycoolvpswithvnc )
-- In Heroku, click on “ Deploy app “ 
-- Finish, Enjoy !
 
 ##### Steps for Railway: 
 - Click on “ Deploy to Railway “ Button 
 - Choose a name for your Web Application ( such as powerfulfree )
-- In Raikway, click on “ Deploy app “ 
+- In Railway, click on “ Deploy app “ 
 - Finish, Enjoy !
 
 
