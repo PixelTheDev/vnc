@@ -67,14 +67,14 @@ RUN apt-key add /app/anydesk.key
 RUN apt-key add /app/linux_signing_key.pub
 RUN set -ex; \
     apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y \
         google-chrome-stable \
 	anydesk
 	
 	#install wine (Nemesistf#0001 petition)
 RUN wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
 RUN sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
-RUN sudo apt install --install-recommends winehq-stable
+RUN sudo apt install -y --install-recommends winehq-stable
 
 
 ENV UNAME root
