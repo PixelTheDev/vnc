@@ -4,7 +4,7 @@
 # NOTE: Use at your own risk, today isn't against Railway's ToS (for Heroku yes).
 
 ### Features:
-  - Running on Ubuntu 18.04 Docker Image
+  - Running on Alpine Linux Docker Image
   - Google Chrome included
   - Lite Desktop xfce4
   - Easy to use
