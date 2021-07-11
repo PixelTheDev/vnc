@@ -1,34 +1,19 @@
-FROM alpine:edge
+FROM alpine:3.14
 
-RUN \
-    # Install required packages
-    echo "http://dl-3.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    apk --update --upgrade add \
-      bash \
-      fluxbox \
-      git \
-      supervisor \
-      xvfb \
-      x11vnc \
-      && \
-    # Install noVNC
-    git clone --depth 1 https://github.com/novnc/noVNC.git /root/noVNC && \
-    git clone --depth 1 https://github.com/novnc/websockify /root/noVNC/utils/websockify && \
-    rm -rf /root/noVNC/.git && \
-    rm -rf /root/noVNC/utils/websockify/.git && \
-    apk del git && \
-    sed -i -- "s/ps -p/ps -o pid | grep/g" /root/noVNC/utils/novnc_proxy
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-EXPOSE 8080
+RUN apk update && \
+    apk add bash git openssh rsync augeas shadow rssh && \
+    deluser $(getent passwd 33 | cut -d: -f1) && \
+    delgroup $(getent group 33 | cut -d: -f1) 2>/dev/null || true && \
+    mkdir -p ~root/.ssh /etc/authorized_keys && chmod 700 ~root/.ssh/ && \
+    augtool 'set /files/etc/ssh/sshd_config/AuthorizedKeysFile ".ssh/authorized_keys /etc/authorized_keys/%u"' && \
+    echo -e "Port 22\n" >> /etc/ssh/sshd_config && \
+    cp -a /etc/ssh /etc/ssh.cache && \
+    rm -rf /var/cache/apk/*
 
-# Setup environment variables
-ENV HOME=/root \
-    DEBIAN_FRONTEND=noninteractive \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8 \
-    LC_ALL=C.UTF-8 \
-    DISPLAY=:0.0 \
-    DISPLAY_WIDTH=1024 \
-    DISPLAY_HEIGHT=768
+EXPOSE 22
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+COPY entry.sh /entry.sh
+
+ENTRYPOINT ["/entry.sh"]
+
+CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config"]
