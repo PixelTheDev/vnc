@@ -1,98 +1,35 @@
-FROM ubuntu:18.04
+FROM alpine:edge
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN \
+    # Install required packages
+    echo "http://dl-3.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    apk --update --upgrade add \
+      bash \
+      fluxbox \
+      git \
+      supervisor \
+      xvfb \
+      x11vnc \
+      && \
+    # Install noVNC
+    git clone --depth 1 https://github.com/novnc/noVNC.git /root/noVNC && \
+    git clone --depth 1 https://github.com/novnc/websockify /root/noVNC/utils/websockify && \
+    rm -rf /root/noVNC/.git && \
+    rm -rf /root/noVNC/utils/websockify/.git && \
+    apk del git && \
+    sed -i -- "s/ps -p/ps -o pid | grep/g" /root/noVNC/utils/launch.sh
 
-#RUN echo 'deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse\ndeb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse\ndeb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse\ndeb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse\ndeb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse\ndeb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse\ndeb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse\ndeb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse\ndeb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse\ndeb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse\n' > /etc/apt/sources.list
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+EXPOSE 8080
 
-RUN apt-get upgrade 
-RUN set -ex; \
-    apt-get update \
-    && apt-get install -y  \
-        dbus-x11 \
-        nautilus \
-        gedit \
-        expect \
-        sudo \
-        vim \
-	python3-pip \
-	mysql-server \
-	vlc \
-        bash \
-        net-tools \
-        novnc \
-        xfce4 \
-	socat \
-        x11vnc \
-	xvfb \
-        supervisor \
-        curl \
-        git \
-	pulseaudio \
-        wget \
-        g++ \
-	unzip \
-        ssh \
-	ffmpeg \
-	chromium-browser \
-	firefox \
-        terminator \
-        htop \
-        gnupg2 \
-	locales \
-	xfonts-intl-chinese \
-	fonts-wqy-microhei \  
-	ibus-pinyin \
-	ibus \
-	ibus-clutter \
-	ibus-gtk \
-	ibus-gtk3 \
-	ibus-qt4 \
-	openssh-server \
-    && apt-get autoclean \
-    && apt-get autoremove 
-RUN dpkg-reconfigure locales
+# Setup environment variables
+ENV HOME=/root \
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    DISPLAY=:0.0 \
+    DISPLAY_WIDTH=1024 \
+    DISPLAY_HEIGHT=768
 
-RUN sudo apt-get update && sudo apt-get install -y obs-studio
-
-COPY . /app
-RUN chmod +x /app/conf.d/websockify.sh
-RUN chmod +x /app/run.sh
-RUN chmod +x /app/expect_vnc.sh
-RUN echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list
-RUN echo "deb http://deb.anydesk.com/ all main"  >> /etc/apt/sources.list
-RUN wget --no-check-certificate https://dl.google.com/linux/linux_signing_key.pub -P /app
-RUN wget --no-check-certificate -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY -O /app/anydesk.key
-RUN apt-key add /app/anydesk.key
-RUN apt-key add /app/linux_signing_key.pub
-RUN set -ex; \
-    apt-get update \
-    && apt-get install -y \
-        google-chrome-stable \
-	anydesk
-	
-	#install wine (Nemesistf#0001 petition)
-RUN wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-
-
-ENV UNAME root
-
-RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install --yes pulseaudio-utils
-
-RUN export UNAME=$UNAME UID=1000 GID=1000 && \
-    mkdir -p "/home/${UNAME}" && \
-    echo "${UNAME}:x:${UID}:${GID}:${UNAME} User,,,:/home/${UNAME}:/bin/bash" >> /etc/passwd && \
-    echo "${UNAME}:x:${UID}:" >> /etc/group && \
-    mkdir -p /etc/sudoers.d && \
-    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${UNAME} && \
-    chmod 0440 /etc/sudoers.d/${UNAME} && \
-    chown ${UID}:${GID} -R /home/${UNAME} && \
-    gpasswd -a ${UNAME} audio
-
-RUN echo xfce4-session >~/.xsession
-RUN echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" 
-
-CMD ["add-apt-repository ppa:ubuntu-wine/ppa"]
-CMD ["apt install -y --install-recommends winehq-stable"]
-
-CMD ["/app/run.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
