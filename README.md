@@ -1,4 +1,4 @@
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2FPixelTheDev%2Fvnc&envs=PORT&PORTDesc=To+avoid+bad+gateway&PORTDefault=443)
+# DEPRECATED: RAILWAY NOW FORBIDES THIS.
 # VNC Server ( Virtual Network Computing ) on Railway
 
 # NOTE: Use at your own risk, today isn't against Railway's ToS (for Heroku yes).
